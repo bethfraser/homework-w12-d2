@@ -19663,15 +19663,16 @@
 
 	var React = __webpack_require__(1);
 	var CountriesSelect = __webpack_require__(160);
-	var CountryDisplay = __webpack_require__(161);
-	var BordersDisplay = __webpack_require__(162);
+	var RegionSelect = __webpack_require__(161);
+	var CountryDisplay = __webpack_require__(162);
+	var BordersDisplay = __webpack_require__(163);
 
 	var CountriesBox = React.createClass({
 	  displayName: 'CountriesBox',
 
 
 	  getInitialState: function getInitialState() {
-	    return { countries: [], currentCountry: null };
+	    return { countries: [], currentCountry: null, regions: [], regionCountries: [] };
 	  },
 
 	  componentDidMount: function componentDidMount() {
@@ -19680,13 +19681,82 @@
 	    request.open("GET", url);
 	    request.onload = function () {
 	      var data = JSON.parse(request.responseText);
-	      this.setState({ countries: data });
+	      var regions = [];
+
+	      var _iteratorNormalCompletion = true;
+	      var _didIteratorError = false;
+	      var _iteratorError = undefined;
+
+	      try {
+	        for (var _iterator = data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          var country = _step.value;
+
+	          var region = country.region;
+	          if (country.region === "") {
+	            region = "Other";
+	          }
+	          if (!regions.includes(region)) {
+	            regions.push(region);
+	          }
+	        }
+	      } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion && _iterator.return) {
+	            _iterator.return();
+	          }
+	        } finally {
+	          if (_didIteratorError) {
+	            throw _iteratorError;
+	          }
+	        }
+	      }
+
+	      this.setState({ countries: data, regions: regions, regionCountries: data });
 	    }.bind(this);
 	    request.send(null);
 	  },
 
 	  changeCountry: function changeCountry(country) {
 	    this.setState({ currentCountry: country });
+	  },
+
+	  changeRegion: function changeRegion(region) {
+	    var newCountryList = [];
+	    if (region === "Other") {
+	      region = "";
+	    }
+
+	    var _iteratorNormalCompletion2 = true;
+	    var _didIteratorError2 = false;
+	    var _iteratorError2 = undefined;
+
+	    try {
+	      for (var _iterator2 = this.state.countries[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	        var country = _step2.value;
+
+	        if (country.region === region) {
+	          newCountryList.push(country);
+	        }
+	      }
+	    } catch (err) {
+	      _didIteratorError2 = true;
+	      _iteratorError2 = err;
+	    } finally {
+	      try {
+	        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	          _iterator2.return();
+	        }
+	      } finally {
+	        if (_didIteratorError2) {
+	          throw _iteratorError2;
+	        }
+	      }
+	    }
+
+	    this.setState({ regionCountries: newCountryList });
 	  },
 
 	  render: function render() {
@@ -19698,12 +19768,12 @@
 	        null,
 	        'Countries Box'
 	      ),
-	      React.createElement(CountriesSelect, { countries: this.state.countries, onChooseCountry: this.changeCountry }),
+	      React.createElement(RegionSelect, { regions: this.state.regions, onChooseRegion: this.changeRegion }),
+	      React.createElement(CountriesSelect, { countries: this.state.countries, countriesForSelect: this.state.regionCountries, onChooseCountry: this.changeCountry }),
 	      React.createElement(CountryDisplay, { country: this.state.currentCountry }),
 	      React.createElement(BordersDisplay, { countries: this.state.countries, country: this.state.currentCountry, onButtonClick: this.changeCountry })
 	    );
 	  }
-
 	});
 
 	module.exports = CountriesBox;
@@ -19728,13 +19798,13 @@
 	    e.preventDefault();
 	    var newIndex = e.target.value;
 	    this.setState({ selectedIndex: newIndex });
-	    var newCountry = this.props.countries[newIndex];
+	    var newCountry = this.props.countriesForSelect[newIndex];
 	    this.props.onChooseCountry(newCountry);
 	  },
 
 	  render: function render() {
 
-	    var countryOptions = this.props.countries.map(function (country, index) {
+	    var countryOptions = this.props.countriesForSelect.map(function (country, index) {
 	      return React.createElement(
 	        'option',
 	        { value: index, key: country.alpha3Code },
@@ -19757,13 +19827,63 @@
 	      )
 	    );
 	  }
-
 	});
 
 	module.exports = CountriesSelect;
 
 /***/ },
 /* 161 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+
+	var RegionSelect = React.createClass({
+	  displayName: 'RegionSelect',
+
+
+	  getInitialState: function getInitialState() {
+	    return { selectedIndex: null };
+	  },
+
+	  handleChange: function handleChange(e) {
+	    e.preventDefault();
+	    var newRegion = e.target.value;
+	    this.props.onChooseRegion(newRegion);
+	  },
+
+	  render: function render() {
+
+	    var regionOptions = this.props.regions.map(function (region, index) {
+	      return React.createElement(
+	        'option',
+	        { key: index },
+	        region
+	      );
+	    }.bind(this));
+
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'select',
+	        { value: this.state.selectedIndex, onChange: this.handleChange },
+	        React.createElement(
+	          'option',
+	          null,
+	          'Filter by region: '
+	        ),
+	        regionOptions
+	      )
+	    );
+	  }
+	});
+
+	module.exports = RegionSelect;
+
+/***/ },
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19830,7 +19950,7 @@
 	module.exports = CountryDisplay;
 
 /***/ },
-/* 162 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -19843,7 +19963,6 @@
 
 	  handleClick: function handleClick(event) {
 	    var countryCode = event.target.innerText;
-
 	    var _iteratorNormalCompletion = true;
 	    var _didIteratorError = false;
 	    var _iteratorError = undefined;
@@ -19875,7 +19994,6 @@
 	  },
 
 	  render: function render() {
-
 	    var bordersView = function bordersView() {
 	      return React.createElement(
 	        "p",
@@ -19883,14 +20001,12 @@
 	        "None"
 	      );
 	    };
-
 	    var title;
 
 	    if (this.props.country != null && this.props.country.borders.length > 0) {
 
 	      title = "Borders";
 	      var borders = this.props.country.borders;
-
 	      bordersView = borders.map(function (border, index) {
 	        return React.createElement(
 	          "li",

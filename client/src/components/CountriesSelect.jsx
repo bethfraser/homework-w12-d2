@@ -10,13 +10,13 @@ var CountriesSelect = React.createClass({
     e.preventDefault();
     var newIndex = e.target.value;
     this.setState({selectedIndex: newIndex});
-    var newCountry = this.props.countries[newIndex];
+    var newCountry = this.props.countriesForSelect[newIndex];
     this.props.onChooseCountry(newCountry);
   },
 
   render: function(){
 
-    var countryOptions = this.props.countries.map(function(country, index){
+    var countryOptions = this.props.countriesForSelect.map(function(country, index){
       return(
         <option value={index} key={country.alpha3Code}>{country.name}</option>
       );
@@ -29,11 +29,8 @@ var CountriesSelect = React.createClass({
       {countryOptions}
       </select>
       </div>
-
     )
-
   }
-
 });
 
 module.exports = CountriesSelect;
