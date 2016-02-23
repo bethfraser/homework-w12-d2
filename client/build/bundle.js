@@ -19729,29 +19729,33 @@
 	      region = "";
 	    }
 
-	    var _iteratorNormalCompletion2 = true;
-	    var _didIteratorError2 = false;
-	    var _iteratorError2 = undefined;
+	    if (region == "Filter by region:") {
+	      newCountryList = this.state.countries;
+	    } else {
+	      var _iteratorNormalCompletion2 = true;
+	      var _didIteratorError2 = false;
+	      var _iteratorError2 = undefined;
 
-	    try {
-	      for (var _iterator2 = this.state.countries[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	        var country = _step2.value;
-
-	        if (country.region === region) {
-	          newCountryList.push(country);
-	        }
-	      }
-	    } catch (err) {
-	      _didIteratorError2 = true;
-	      _iteratorError2 = err;
-	    } finally {
 	      try {
-	        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	          _iterator2.return();
+	        for (var _iterator2 = this.state.countries[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	          var country = _step2.value;
+
+	          if (country.region === region) {
+	            newCountryList.push(country);
+	          }
 	        }
+	      } catch (err) {
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
 	      } finally {
-	        if (_didIteratorError2) {
-	          throw _iteratorError2;
+	        try {
+	          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	            _iterator2.return();
+	          }
+	        } finally {
+	          if (_didIteratorError2) {
+	            throw _iteratorError2;
+	          }
 	        }
 	      }
 	    }
@@ -19790,14 +19794,9 @@
 	  displayName: 'CountriesSelect',
 
 
-	  getInitialState: function getInitialState() {
-	    return { selectedIndex: null };
-	  },
-
 	  handleChange: function handleChange(e) {
 	    e.preventDefault();
 	    var newIndex = e.target.value;
-	    this.setState({ selectedIndex: newIndex });
 	    var newCountry = this.props.countriesForSelect[newIndex];
 	    this.props.onChooseCountry(newCountry);
 	  },
@@ -19817,7 +19816,7 @@
 	      null,
 	      React.createElement(
 	        'select',
-	        { value: this.state.selectedIndex, onChange: this.handleChange },
+	        { onChange: this.handleChange },
 	        React.createElement(
 	          'option',
 	          null,

@@ -2,14 +2,9 @@ var React = require('react');
 
 var CountriesSelect = React.createClass({
 
-  getInitialState: function(){
-    return {selectedIndex: null}
-  },
-
   handleChange: function(e){
     e.preventDefault();
     var newIndex = e.target.value;
-    this.setState({selectedIndex: newIndex});
     var newCountry = this.props.countriesForSelect[newIndex];
     this.props.onChooseCountry(newCountry);
   },
@@ -24,7 +19,7 @@ var CountriesSelect = React.createClass({
 
     return(
       <div>
-      <select value={this.state.selectedIndex} onChange={this.handleChange}>
+      <select onChange={this.handleChange}>
       <option>Choose a country: </option>
       {countryOptions}
       </select>

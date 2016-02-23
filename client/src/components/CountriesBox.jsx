@@ -44,11 +44,17 @@ var CountriesBox = React.createClass({
       region = ""
     }
     
-    for(var country of this.state.countries){
-      if(country.region === region){
-        newCountryList.push(country);
+    if(region == "Filter by region:"){
+      newCountryList = this.state.countries;
+    }
+    else {
+      for(var country of this.state.countries){
+        if(country.region === region){
+          newCountryList.push(country);
+        }
       }
     }
+
     this.setState({regionCountries: newCountryList})
   },
 
